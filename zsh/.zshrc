@@ -1,66 +1,31 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+# if you want to profile your zsh startup time
+# uncomment the following line and run zprof as the first command in a new shell
+# zmodload zsh/zprof
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that soh-my-zsh is loaded.
-ZSH_THEME="simple"
-
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
-
-# Comment this out to disable bi-weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment to change how often before auto-updates occur? (in days)
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment following line if you want to disable command autocorrection
-# DISABLE_CORRECTION="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment following line if you want to disable marking untracked files under
-# VCS as dirty. This makes repository status check for large repositories much,
-# much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git themes)
-
-source $ZSH/oh-my-zsh.sh
-
-# Customize to your needs...
-export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:~/.dotnet:~/.local/bin
+export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # use 256 color terminal
 export TERM=xterm-256color
 
 # use vim as standard editor
-export VISUAL=vim
+export VISUAL=nvim
 export EDITOR="$VISUAL"
 
-# Base16 Shell
-BASE16_SHELL="$HOME/.config/base16-shell/"
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        source "$BASE16_SHELL/profile_helper.sh"
-        
-base16_dracula
+# I'm a weirdo. I like vim but prefer emacs mode on the terminal.
+# Since zsh automatically enables vi mode when you set 'vi' as your standard $EDITOR, let's explicitly request emacs mode.
+bindkey -e
+
+
+#------------------------------------------------------
+# Better History
+#------------------------------------------------------
+setopt SHARE_HISTORY        # share history between all sessions
+setopt HIST_IGNORE_SPACE    # don't record commands that start with a space
+setopt INC_APPEND_HISTORY   # write to $HISTFILE immediately, not just when exiting the shell
+setopt HIST_IGNORE_ALL_DUPS # remove old duplicates from history
+setopt HIST_VERIFY          # don't execute immediately when picking from history
+HISTSIZE=50000              # store more than the default 10_000 entries
+SAVEHIST=$HISTSIZE          # and also store all these entries in our $HISTFILE
 
 #------------------------------------------------------
 # Aliases
@@ -68,6 +33,14 @@ base16_dracula
 alias serve='python -m http.server'
 alias de='setxkbmap de'
 alias us='setxkbmap us'
+alias lnks='~/dev/lnks/lnks.sh'
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../../'
+
+alias ls="ls --color=auto"
+alias ll="ls -asl"
 
 # print current week number
 alias week='date +%V'
@@ -112,12 +85,46 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 #------------------------------------------------------
-# Keybindings, Autocomplete
+# Autocompletion
 #------------------------------------------------------
 
+zmodload zsh/complist
+autoload -U compinit; compinit
+_comp_options+=(globdots)   # include hidden files
+setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
+setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
+
+
+# Use select menu for completions
+zstyle ':completion:*' menu select
+
+# Autocomplete options when completing a '-'
+zstyle ':completion:*' complete-options true
+
+# Style group names a little nicer
+zstyle ':completion:*:*:*:*:descriptions' format '%F{green}↓ %d %f'
+
+# Group completion results by type
+zstyle ':completion:*' group-name ''
+
+
 # add fzf keybindings and autocompletion
+source <(fzf --zsh)
 if [ -x "$(command -v fzf)" ]; then
-    source /usr/share/doc/fzf/examples/key-bindings.zsh
-    source /usr/share/doc/fzf/examples/completion.zsh
+    # Catppuccin Mocha colors for fzf
+    export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 fi
 
+#------------------------------------------------------
+# Additional tools (version managers, CLI tools, ...)
+#------------------------------------------------------
+
+export FLYCTL_INSTALL="/home/ham/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+
+# Prompt
+eval "$(starship init zsh)"

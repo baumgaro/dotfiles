@@ -1,0 +1,20 @@
+import = ["~/.config/alacritty/colors/rootloops.toml"]
+
+[font]
+size = 15.0
+
+[font.bold]
+family = "FiraCode Nerd Font"
+
+[font.bold_italic]
+family = "FiraCode Nerd Font"
+
+[font.italic]
+family = "FiraCode Nerd Font"
+
+[font.normal]
+family = "FiraCode Nerd Font"
+
+[window.padding]
+x = 10
+y = 5

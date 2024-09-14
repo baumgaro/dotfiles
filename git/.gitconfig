@@ -7,13 +7,14 @@
 
 [alias]
     c = commit -v
-    co = checkout
+    co = checkout	
     cob = checkout -b
+    coi = !git checkout $(git branch --sort=committerdate | fzf)
     s = status
     br = branch
     d = diff
-    dd = diff --cached`
-    l = git log --oneline --graph
+    dd = diff --cached
+    l = log --oneline --graph
     cp = cherry-pick
     ps = push
     pl = pull
@@ -29,6 +30,7 @@
     line-numbers = true
     navigate = true    # use n and N to move between diff sections
     light = false      # set to true if you're in a terminal w/ a light background color
+    syntax-theme = Catppuccin-mocha
 
 [merge]
     conflictstyle = diff3
